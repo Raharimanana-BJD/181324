@@ -33,8 +33,6 @@ yarn-error.log*
 .env
 command.sh
 *.sh
-products/
-public/products
 
 # vercel
 .vercel
