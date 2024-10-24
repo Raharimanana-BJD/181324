@@ -8,7 +8,7 @@ import {
   PieChart,
   Plus,
   ShoppingCart,
-  Users
+  Users,
 } from "lucide-react";
 import * as React from "react";
 
@@ -52,7 +52,7 @@ const data = {
   user: {
     name: "John Doe",
     email: "john@example.com",
-    avatar: "/avatars/john-doe.jpg",
+    avatar: "/00000000000000000000000.png",
   },
   teams: [
     {
