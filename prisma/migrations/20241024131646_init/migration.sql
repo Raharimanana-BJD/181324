@@ -36,13 +36,13 @@ CREATE TABLE "Order" (
 );
 
 -- CreateTable
-CREATE TABLE "DownloadVerification" (
+CREATE TABLE "downloadVerification" (
     "id" TEXT NOT NULL,
     "expiresAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "productId" TEXT NOT NULL,
 
-    CONSTRAINT "DownloadVerification_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "downloadVerification_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -55,4 +55,4 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") RE
 ALTER TABLE "Order" ADD CONSTRAINT "Order_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "DownloadVerification" ADD CONSTRAINT "DownloadVerification_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "downloadVerification" ADD CONSTRAINT "downloadVerification_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -8,7 +8,8 @@
     "start": "next start",
     "str": "stripe listen --forward-to localhost:3000/webhooks/stripe",
     "lint": "next lint",
-    "email:dev": "cp .env ./node_modules/react-email && email dev --dir src/email --port 3001"
+    "email:dev": "cp .env ./node_modules/react-email && email dev --dir src/email --port 3001",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
