@@ -38,7 +38,7 @@ type CheckoutFormProps = {
 };
 
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 );
 
 async function fetchRelatedProducts(): Promise<Product[]> {
@@ -84,7 +84,7 @@ function ProductDetails({ product, clientSecret }: CheckoutFormProps) {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">{product.name}</h1>
-      <p className="text-secondary">{product.description}</p>
+      <p className="text-muted-foreground">{product.description}</p>
       <div className="text-3xl font-bold">
         {formatCurrency(product.priceInCents / 100)}
       </div>

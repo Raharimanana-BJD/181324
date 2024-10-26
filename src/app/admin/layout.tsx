@@ -122,7 +122,7 @@ export default function LayoutAdmin({
                         width={72}
                         height={72}
                         alt="logo"
-                        className="h-4 w-4 invert"
+                        className="invert"
                       />
                     </div>
                     <div className="grid flex-1 text-left text-sm leading-tight">
@@ -158,7 +158,6 @@ export default function LayoutAdmin({
                           width={72}
                           height={72}
                           alt="logo"
-                          className="h-4 w-4"
                         />
                       </div>
                       {team.name}

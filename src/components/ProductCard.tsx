@@ -44,7 +44,7 @@ export function ProductCard({
         </p>
         <div className="flex justify-between items-center">
           <span className="font-bold">
-            ${formatCurrency(priceInCents / 100)}
+            {formatCurrency(priceInCents / 100)}
           </span>
           <Button size="sm" asChild>
             <Link href={`/products/${id}/purchase`}>Buy</Link>

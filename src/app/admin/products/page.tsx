@@ -11,8 +11,9 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import ProductTable from "./_components/product-table";
 import ProductHeader from "./_components/productHeader";
+import db from "@/db/db";
 
-export default function page() {
+export default async function page() {
   return (
     <>
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b flex justify-between pr-4 h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
