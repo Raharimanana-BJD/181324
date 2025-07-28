@@ -35,7 +35,7 @@ const getNewestProducts = cache(
 
 export default function HomePage() {
   return (
-    <main className="space-y-12">
+    <main className="relative space-y-12">
       <HeroSection />
       <ProductGridSection
         title="Popular Products"
@@ -56,9 +56,14 @@ export default function HomePage() {
 
 function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-r from-primary to-secondary text-primary-foreground py-32">
+    <section
+      className="relative text-primary-foreground py-32"
+      style={{
+        backgroundImage: `radial-gradient(circle 500px at 50% 300px, rgba(16,185,129,0.35), transparent)`,
+      }}
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl">
+        <div className="max-w-3xl text-primary">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4">
             {constants.herosdata.title}
           </h1>
@@ -73,13 +78,13 @@ function HeroSection() {
           </Button>
         </div>
       </div>
-      <div
+      {/* <div
         className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"
         style={{
           maskImage: "linear-gradient(to bottom, transparent, black)",
           WebkitMaskImage: "linear-gradient(to bottom, transparent, black)",
         }}
-      />
+      /> */}
     </section>
   );
 }

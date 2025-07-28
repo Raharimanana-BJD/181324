@@ -1,4 +1,4 @@
-import { ProductCard, ProductCardSkeleton } from "@/components/ProductCard";
+import ProductCard, { ProductCardSkeleton } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,6 +19,16 @@ const getProducts = cache(() => {
     orderBy: { name: "asc" },
   });
 }, ["/products", "getProducts"]);
+
+type ProductCardProps = {
+  id: string;
+  name: string;
+  priceInCents: number;
+  description: string;
+  imagePath: string;
+  stock: number;
+  isAvailableForPurchase: boolean;
+};
 
 export default function ProductsPage() {
   return (
@@ -78,16 +88,7 @@ export default function ProductsPage() {
 
 async function ProductsSuspense() {
   const products = await getProducts();
-
-  return products.map(
-    (
-      product: JSX.IntrinsicAttributes & {
-        id: string;
-        name: string;
-        priceInCents: number;
-        description: string;
-        imagePath: string;
-      }
-    ) => <ProductCard key={product.id} {...product} />
-  );
+  return products.map((product: ProductCardProps) => (
+    <ProductCard key={product.id} product={product} />
+  ));
 }

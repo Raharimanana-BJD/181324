@@ -1,147 +1,198 @@
 "use client";
 
+import { useFormState, useFormStatus } from "react-dom";
+import { useState } from "react";
+import Image from "next/image";
+
+import { Product } from "@prisma/client";
+import { addProduct, updateProduct } from "../../_actions/products";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { formatCurrency } from "@/lib/formatters";
-import { Product } from "@prisma/client";
-import { JSONContent } from "@tiptap/react";
-import { File } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { addProduct, updateProduct } from "../../_actions/products";
 import { Textarea } from "@/components/ui/textarea";
-// import { TipTapEditor } from "./editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { formatCurrency } from "@/lib/formatters";
 
-export function ProductForm({ product }: { product?: Product | null }) {
+type Category = {
+  id: string;
+  name: string;
+};
+
+export function ProductForm({
+  product,
+  categories,
+}: {
+  product?: Product | null;
+  categories: Category[];
+}) {
   const [error, action] = useFormState(
     product == null ? addProduct : updateProduct.bind(null, product.id),
     {}
   );
+
   const [priceInCents, setPriceInCents] = useState<number | undefined>(
     product?.priceInCents
   );
 
-  // const [json, setJson] = useState<JSONContent | null>(
-  //   product?.description ? JSON.parse(product.description) : null
-  // );
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const units = ["PIECE", "KG", "GRAM", "LITER", "ML", "BUNCH"];
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  }
+
   return (
-    <div className="p-11">
-      <Card className="w-full mx-auto">
+    <div className="p-8 max-w-5xl mx-auto">
+      <Card>
         <CardHeader>
           <CardTitle>{product ? "Edit Product" : "Add New Product"}</CardTitle>
         </CardHeader>
         <CardContent>
           <form
-            // onSubmit={(e) => {
-            //   e.preventDefault();
-            //   const formData = new FormData(e.currentTarget);
-            //   formData.set("description", JSON.stringify(json));
-            //   action(formData);
-            // }}
-
             action={action}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
           >
-            <div className="col-span-2 md:col-span-1">
-              <div className="space-y-2">
+            {/* Colonne gauche */}
+            <div className="space-y-4">
+              <div>
                 <Label htmlFor="name">Name</Label>
                 <Input
-                  type="text"
                   id="name"
                   name="name"
+                  defaultValue={product?.name ?? ""}
                   required
-                  defaultValue={product?.name || ""}
-                  className="w-full"
                 />
                 {error.name && (
-                  <div className="text-destructive text-sm">{error.name}</div>
+                  <p className="text-sm text-destructive mt-1">{error.name}</p>
                 )}
               </div>
-              <div className="space-y-2">
+
+              <div>
                 <Label htmlFor="priceInCents">Price</Label>
                 <Input
-                  type="number"
                   id="priceInCents"
                   name="priceInCents"
-                  required
+                  type="number"
                   value={priceInCents}
                   onChange={(e) =>
                     setPriceInCents(Number(e.target.value) || undefined)
                   }
-                  className="w-full"
+                  required
                 />
-                <div className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {formatCurrency((priceInCents || 0) / 100)}
-                </div>
+                </p>
                 {error.priceInCents && (
-                  <div className="text-destructive text-sm">
+                  <p className="text-sm text-destructive mt-1">
                     {error.priceInCents}
-                  </div>
+                  </p>
                 )}
               </div>
-              <div className="space-y-2">
-                {/* <Input
-                  name="description"
-                  type="hidden"
-                  value={JSON.stringify(json)}
-                /> */}
-                <Label htmlFor="description">Description</Label>
-                {/* <TipTapEditor json={json} setJson={setJson} /> */}
 
+              <div>
+                <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
                   name="description"
+                  defaultValue={product?.description ?? ""}
                   required
-                  defaultValue={product?.description}
-                  className="w-full min-h-[150px]"
                 />
                 {error.description && (
-                  <div className="text-destructive text-sm">
+                  <p className="text-sm text-destructive mt-1">
                     {error.description}
-                  </div>
+                  </p>
                 )}
               </div>
             </div>
 
-            <div className="col-span-2 md:col-span-1">
-              <div className="space-y-2">
-                <Label htmlFor="file">File</Label>
+            {/* Colonne droite */}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="stock">Stock</Label>
                 <Input
-                  type="file"
-                  id="file"
-                  name="file"
-                  required={product == null}
-                  className="w-full"
+                  id="stock"
+                  name="stock"
+                  type="number"
+                  defaultValue={product?.stock}
+                  required
                 />
-                {product != null && (
-                  <div className="inline-flex gap-2 items-center">
-                    <File size={42} />
-                    <span className="text-muted-foreground text-sm">
-                      {product.filePath}
-                    </span>
-                  </div>
-                )}
-                {error.file && (
-                  <div className="text-destructive text-sm">{error.file}</div>
+                {error.stock && (
+                  <p className="text-sm text-destructive mt-1">{error.stock}</p>
                 )}
               </div>
-              <div className="space-y-2">
+
+              <div>
+                <Label htmlFor="unit">Unit</Label>
+                <Select name="unit" required defaultValue={product?.unit}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {units.map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {error.unit && (
+                  <p className="text-sm text-destructive mt-1">{error.unit}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="categoryId">Category</Label>
+                <Select
+                  name="categoryId"
+                  required
+                  defaultValue={product?.categoryId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {error.categoryId && (
+                  <p className="text-sm text-destructive mt-1">
+                    {error.categoryId}
+                  </p>
+                )}
+              </div>
+
+              <div>
                 <Label htmlFor="image">Image</Label>
                 <Input
-                  type="file"
                   id="image"
                   name="image"
-                  required={product == null}
-                  className="w-full"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required={!product}
                 />
-                {product != null && (
-                  <div className="mt-2 border flex items-center justify-center rounded-md overflow-hidden h-70 p-8">
+                {(product?.imagePath || previewUrl) && (
+                  <div className="mt-4 border rounded-md overflow-hidden flex justify-center items-center p-4">
                     <Image
-                      src={product.imagePath}
-                      alt="Product Image"
+                      src={previewUrl ?? product!.imagePath}
+                      alt="Preview"
                       width={200}
                       height={200}
                       className="h-40 w-40 object-cover"
@@ -149,11 +200,13 @@ export function ProductForm({ product }: { product?: Product | null }) {
                   </div>
                 )}
                 {error.image && (
-                  <div className="text-destructive text-sm">{error.image}</div>
+                  <p className="text-sm text-destructive mt-1">{error.image}</p>
                 )}
               </div>
             </div>
-            <div className="pt-6 col-span-2">
+
+            {/* Submit */}
+            <div className="col-span-1 md:col-span-2 pt-4">
               <SubmitButton />
             </div>
           </form>

@@ -23,31 +23,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./ProductActions";
 
+function formatDate(date: Date | string | number) {
+  return new Date(date).toLocaleString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}
+
 export default async function ProductTable() {
-  const product = await db.product.findMany({
+  const products = await db.product.findMany({
     select: {
       id: true,
+      name: true,
+      imagePath: true,
       priceInCents: true,
       isAvailableForPurchase: true,
-      filePath: true,
-      imagePath: true,
       createdAt: true,
-      name: true,
       _count: { select: { orders: true } },
     },
     orderBy: { name: "asc" },
   });
-
-  const formatDate = (date: string | number | Date) => {
-    return new Date(date).toLocaleString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
 
   return (
     <div className="border rounded-md">
@@ -64,14 +63,14 @@ export default async function ProductTable() {
               <TableHead className="hidden md:table-cell">
                 Total Sales
               </TableHead>
-              <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead className="hidden md:table-cell">Created At</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {product.length === 0 ? (
+            {products.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center h-24">
                   <p className="text-sm text-muted-foreground">
@@ -80,24 +79,28 @@ export default async function ProductTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              product.map((product) => (
+              products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
                       alt={product.name}
+                      src={product.imagePath}
+                      width={64}
+                      height={64}
                       className="aspect-square rounded-md object-cover"
-                      height="64"
-                      src={product.imagePath.replace(/^public/, "")}
-                      width="64"
                     />
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>
-                    {product.isAvailableForPurchase ? (
-                      <Badge variant="default">True</Badge>
-                    ) : (
-                      <Badge variant="destructive">False</Badge>
-                    )}
+                    <Badge
+                      variant={
+                        product.isAvailableForPurchase
+                          ? "default"
+                          : "destructive"
+                      }
+                    >
+                      {product.isAvailableForPurchase ? "Active" : "Inactive"}
+                    </Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {formatCurrency(product.priceInCents / 100)}
@@ -112,12 +115,12 @@ export default async function ProductTable() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          aria-haspopup="true"
-                          size="icon"
                           variant="ghost"
+                          size="icon"
+                          aria-haspopup="true"
                         >
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
+                          <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">

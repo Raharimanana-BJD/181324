@@ -6,32 +6,45 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
-}
-        
-
-model Product {
-  id                     String                 @id @default(uuid())
-  name                   String
-  priceInCents           Int
-  filePath               String
-  imagePath              String
-  description            String
-  isAvailableForPurchase Boolean                @default(true)
-  createdAt              DateTime               @default(now())
-  updatedAt              DateTime               @updatedAt
-  orders                 Order[]
-  downloadVerifications  downloadVerification[]
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
+  name      String   @unique //new
+  role      Role     @default(CLIENT) //new
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
+}
+
+model Product {
+  id                     String   @id @default(uuid())
+  name                   String
+  priceInCents           Int
+  imagePath              String
+  stock                  Int // Quantité disponible
+  unit                   Unit // Unité de mesure
+  description            String
+  isAvailableForPurchase Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  orders Order[]
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  color     String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Order {
@@ -39,6 +52,7 @@ model Order {
   pricePaidInCents Int
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  quantity         Int      @default(1)
 
   userId    String
   productId String
@@ -46,10 +60,16 @@ model Order {
   product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 }
 
-model downloadVerification {
-  id        String   @id @default(uuid())
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+enum Role {
+  CLIENT
+  ADMIN
+}
+
+enum Unit {
+  PIECE
+  KG
+  GRAM
+  LITER
+  ML
+  BUNCH
 }

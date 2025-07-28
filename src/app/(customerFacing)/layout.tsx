@@ -1,5 +1,5 @@
 import { Footer } from "@/components/footer";
-import { Navigation } from "@/components/navigation";
+import Header from "@/components/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ export default function Layout({
 }>) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
+      <Header />
       {children}
       <Footer />
     </div>

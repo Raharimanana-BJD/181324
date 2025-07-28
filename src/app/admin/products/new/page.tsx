@@ -9,8 +9,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ProductForm } from "../_components/ProductForm";
+import db from "@/db/db";
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
+  const categories = await db.category.findMany({
+    select: { id: true, name: true },
+  });
   return (
     <>
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b flex justify-between pr-4 h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -36,7 +40,7 @@ export default function NewProductPage() {
           </Breadcrumb>
         </div>
       </header>
-      <ProductForm />
+      <ProductForm categories={categories} />
     </>
   );
 }

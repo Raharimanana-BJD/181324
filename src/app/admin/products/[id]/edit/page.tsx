@@ -1,3 +1,5 @@
+// /products/[id]/edit/page.tsx
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import db from "@/db/db";
 import { ProductForm } from "../../_components/ProductForm";
+import { notFound } from "next/navigation";
 
 export default async function EditProductPage({
   params: { id },
@@ -17,6 +20,11 @@ export default async function EditProductPage({
   params: { id: string };
 }) {
   const product = await db.product.findUnique({ where: { id } });
+  if (!product) return notFound();
+
+  const categories = await db.category.findMany({
+    select: { id: true, name: true },
+  });
 
   return (
     <>
@@ -43,7 +51,8 @@ export default async function EditProductPage({
           </Breadcrumb>
         </div>
       </header>
-      <ProductForm product={product} />
+
+      <ProductForm product={product} categories={categories} />
     </>
   );
 }
