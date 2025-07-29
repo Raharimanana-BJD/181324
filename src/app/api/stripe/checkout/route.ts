@@ -8,7 +8,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("Server URL:", process.env.NEXT_PUBLIC_SERVER_URL);
     const { items, customerEmail, customerName } = await req.json();
 
     if (!items || items.length === 0) {

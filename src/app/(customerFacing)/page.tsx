@@ -46,7 +46,14 @@ export default function HomePage() {
         productsFetcher={getNewestProducts}
         className="bg-muted/50"
         gridCols="lg:grid-cols-3"
-        ProductCardComponent={ProductCardRecent}
+        ProductCardComponent={({ product }: { product: any }) => (
+          <ProductCardRecent
+            id={product.id}
+            name={product.name}
+            description={product.description}
+            imagePath={product.imagePath}
+          />
+        )}
       />
       <TestimonialSection />
       <NewsletterSection />
@@ -94,7 +101,7 @@ type ProductGridSectionProps = {
   productsFetcher: () => Promise<Product[]>;
   className?: string;
   gridCols?: string;
-  ProductCardComponent?: React.ComponentType<Product>;
+  ProductCardComponent?: React.ComponentType<any>;
 };
 
 function ProductGridSection({
@@ -142,11 +149,11 @@ async function ProductSuspense({
   ProductCardComponent,
 }: {
   productsFetcher: () => Promise<Product[]>;
-  ProductCardComponent: React.ComponentType<Product>;
+  ProductCardComponent: React.ComponentType<any>;
 }) {
   const products = await productsFetcher();
   return products.map((product) => (
-    <ProductCardComponent key={product.id} {...product} />
+    <ProductCardComponent key={product.id} product={product} />
   ));
 }
 

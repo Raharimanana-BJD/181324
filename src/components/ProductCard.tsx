@@ -36,6 +36,11 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
 
+  // Vérification de sécurité
+  if (!product) {
+    return <ProductCardSkeleton />;
+  }
+
   const handleAddToCart = () => {
     addItem({ ...product, unit: product.unit as Unit }, 1);
   };
