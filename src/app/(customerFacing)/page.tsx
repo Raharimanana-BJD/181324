@@ -1,4 +1,4 @@
-import { ProductCard, ProductCardSkeleton } from "@/components/ProductCard";
+import ProductCard, { ProductCardSkeleton } from "@/components/ProductCard";
 import { ProductCardRecent } from "@/components/ProductCardRecent";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

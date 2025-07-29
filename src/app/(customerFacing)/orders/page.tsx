@@ -1,80 +1,94 @@
 "use client";
 
-import { emailOrderHistory } from "@/actions/orders";
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useFormState, useFormStatus } from "react-dom";
-import { Mail } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
-export default function MyOrdersPage() {
-  const [data, action] = useFormState(emailOrderHistory, {});
+export default function OrdersPage() {
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
+  const canceled = searchParams.get("canceled");
 
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <form action={action} className="w-full max-w-md">
-        <Card className="border-border">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">
-              My Orders
-            </CardTitle>
-            <CardDescription className="text-center">
-              Enter your email and we'll send you your order history and
-              download links
+  useEffect(() => {
+    // Clear cart on successful payment
+    if (success === "true") {
+      localStorage.removeItem("cart");
+    }
+  }, [success]);
+
+  if (success === "true") {
+    return (
+      <div className="container mx-auto py-8">
+        <Card className="max-w-md mx-auto">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+            </div>
+            <CardTitle className="text-green-600">Paiement réussi !</CardTitle>
+            <CardDescription>
+              Votre commande a été traitée avec succès. Vous recevrez un email de confirmation dans quelques minutes.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email Address
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  type="email"
-                  required
-                  name="email"
-                  id="email"
-                  placeholder="you@example.com"
-                  className="pl-10 w-full"
-                />
-              </div>
-            </div>
-            {data.error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-2 rounded">
-                {data.error}
-              </div>
-            )}
+          <CardContent className="text-center">
+            <Button asChild className="w-full">
+              <Link href="/">
+                Continuer les achats
+              </Link>
+            </Button>
           </CardContent>
-          <CardFooter>
-            {data.message ? (
-              <p className="text-sm text-primary bg-primary/10 p-2 rounded w-full text-center">
-                {data.message}
-              </p>
-            ) : (
-              <SubmitButton />
-            )}
-          </CardFooter>
         </Card>
-      </form>
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
+  if (canceled === "true") {
+    return (
+      <div className="container mx-auto py-8">
+        <Card className="max-w-md mx-auto">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100">
+              <AlertCircle className="h-6 w-6 text-yellow-600" />
+            </div>
+            <CardTitle className="text-yellow-600">Paiement annulé</CardTitle>
+            <CardDescription>
+              Votre paiement a été annulé. Aucun montant n'a été débité de votre compte.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button asChild className="w-full">
+              <Link href="/">
+                Retourner au panier
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <Button className="w-full" size="lg" disabled={pending} type="submit">
-      {pending ? "Sending..." : "Send Order History"}
-    </Button>
+    <div className="container mx-auto py-8">
+      <Card className="max-w-md mx-auto">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+            <XCircle className="h-6 w-6 text-gray-600" />
+          </div>
+          <CardTitle>Page non trouvée</CardTitle>
+          <CardDescription>
+            Cette page n'existe pas ou vous n'avez pas les permissions nécessaires.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center">
+          <Button asChild className="w-full">
+            <Link href="/">
+              Retour à l'accueil
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

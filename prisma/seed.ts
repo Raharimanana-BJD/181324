@@ -9,11 +9,11 @@ async function main() {
 
   await db.category.createMany({
     data: [
-      { id: "cereales", name: "Céréales" },
-      { id: "fruits-secs", name: "Fruits secs" },
-      { id: "epices", name: "Épices" },
-      { id: "miel", name: "Miel" },
-      { id: "cafe", name: "Café" },
+      { id: "cereales", name: "Céréales", color:"#fedada" },
+      { id: "fruits-secs", name: "Fruits secs", color:"#faffde" },
+      { id: "epices", name: "Épices", color:"#cfdd" },
+      { id: "miel", name: "Miel", color:"#234568" },
+      { id: "cafe", name: "Café", color:"#f3ee" },
     ],
   });
 

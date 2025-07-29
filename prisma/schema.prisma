@@ -54,6 +54,11 @@ model Order {
   updatedAt        DateTime @updatedAt
   quantity         Int      @default(1)
 
+  // Stripe fields
+  stripePaymentIntentId String?     @unique
+  stripeSessionId       String?     @unique
+  status                OrderStatus @default(PENDING)
+
   userId    String
   productId String
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -72,4 +77,11 @@ enum Unit {
   LITER
   ML
   BUNCH
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
 }

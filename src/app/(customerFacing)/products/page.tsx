@@ -17,22 +17,15 @@ const getProducts = cache(() => {
   return db.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { name: "asc" },
+    include: {
+      category: true
+    }
   });
 }, ["/products", "getProducts"]);
 
-type ProductCardProps = {
-  id: string;
-  name: string;
-  priceInCents: number;
-  description: string;
-  imagePath: string;
-  stock: number;
-  isAvailableForPurchase: boolean;
-};
-
 export default function ProductsPage() {
   return (
-    <main className="space-y-12">
+    <main className="space-y-12 min-h-screen">
       <div className="py-16 w-full lg:grid-cols-4">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
@@ -88,7 +81,7 @@ export default function ProductsPage() {
 
 async function ProductsSuspense() {
   const products = await getProducts();
-  return products.map((product: ProductCardProps) => (
+  return products.map((product) => (
     <ProductCard key={product.id} product={product} />
   ));
 }
